@@ -31,8 +31,6 @@ import org.joda.time.LocalDate;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.value.Clob;
 
-import org.isisaddons.module.security.dom.tenancy.ApplicationTenancyRepository;
-
 import org.incode.module.document.dom.impl.applicability.Binder;
 import org.incode.module.document.dom.impl.docs.Document;
 import org.incode.module.document.dom.impl.docs.DocumentTemplate;
@@ -107,7 +105,8 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
                 ApplicationTenancyForGlobal.PATH, null,
                 contentText, fmkRenderingStrategy,
                 NAME_TEXT_PRELIM_LETTER_GLOBAL, fmkRenderingStrategy,
-                executionContext, Document.class, BinderForDocumentAttachedToPrelimLetterOrInvoice.class);
+                Document.class, BinderForDocumentAttachedToPrelimLetterOrInvoice.class, 
+				executionContext);
 
         contentText = loadResource("PrelimLetterEmailCoverNote-ITA.html");
         upsertDocumentTemplateForTextHtmlWithApplicability(
@@ -115,7 +114,7 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
                 ApplicationTenancyForIt.PATH, " (Italy)",
                 contentText, fmkRenderingStrategy,
                 NAME_TEXT_PRELIM_LETTER_ITA, fmkRenderingStrategy,
-                executionContext, Document.class, BinderForDocumentAttachedToPrelimLetterOrInvoice.class);
+                Document.class, BinderForDocumentAttachedToPrelimLetterOrInvoice.class, executionContext);
 
 
         // template for PL itself
@@ -165,7 +164,7 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
                 ApplicationTenancyForGlobal.PATH, null,
                 contentText, fmkRenderingStrategy,
                 NAME_TEXT_INVOICE_GLOBAL, fmkRenderingStrategy,
-                executionContext, Document.class, BinderForDocumentAttachedToPrelimLetterOrInvoice.class);
+                Document.class, BinderForDocumentAttachedToPrelimLetterOrInvoice.class, executionContext);
 
         contentText = loadResource("InvoiceEmailCoverNote-ITA.html");
         upsertDocumentTemplateForTextHtmlWithApplicability(
@@ -173,7 +172,7 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
                 ApplicationTenancyForIt.PATH, " (Italy)",
                 contentText, fmkRenderingStrategy,
                 NAME_TEXT_INVOICE_ITA, fmkRenderingStrategy,
-                executionContext, Document.class, BinderForDocumentAttachedToPrelimLetterOrInvoice.class);
+                Document.class, BinderForDocumentAttachedToPrelimLetterOrInvoice.class, executionContext);
 
 
         // template for invoice itself
@@ -183,7 +182,7 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
                 docTypeForInvoice,
                 ApplicationTenancyForGlobal.PATH, null,
                 false,
-                url
+                "Invoice for ${this.number}", url
                 + "Invoice"
                 + "&id=${this.id}"
                 + "&rs:Command=Render&rs:Format=PDF",
@@ -197,7 +196,7 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
                 docTypeForInvoice,
                 ApplicationTenancyForIt.PATH, "( Italy)",
                 false,
-                url
+                "Invoice for ${this.number}", url
                 + "Invoice"
                 + "&id=${this.id}"
                 + "&rs:Command=Render&rs:Format=PDF",
@@ -218,7 +217,7 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
                 upsertType(DOC_TYPE_REF_INVOICES_OVERVIEW, "Invoices overview", executionContext),
                 ApplicationTenancyForGlobal.PATH, null,
                 true,
-                URL
+                "Invoices overview", URL
                 + "Invoices"
                 + "&dueDate=${this.dueDate}&${this.seller.id}&atPath=${this.atPath}"
                 + "&rs:Command=Render&rs:Format=PDF",
@@ -233,7 +232,7 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
                 upsertType(DOC_TYPE_REF_INVOICES_PRELIM, "Preliminary letter for Invoices", executionContext),
                 ApplicationTenancyForGlobal.PATH, null,
                 true,
-                URL
+                "Preliminary letter for Invoices", URL
                 + "Preliminary+Letter"
                 + "&dueDate=${this.dueDate}&sellerId=${this.seller.id}&atPath=${this.atPath}"
                 + "&rs:Command=Render&rs:Format=PDF",
@@ -249,7 +248,7 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
                 upsertType(DOC_TYPE_REF_INVOICES_PRELIM_FOR_SELLER, "Preliminary Invoice for Seller", executionContext),
                 ApplicationTenancyForGlobal.PATH, null,
                 true,
-                URL
+                "Preliminary Invoice for Seller", URL
                 + "Preliminary+Letter"
                 + "&dueDate=${this.dueDate}&sellerId=${this.seller.id}&atPath=${this.atPath}"
                 + "&rs:Command=Render&rs:Format=PDF",
@@ -274,9 +273,10 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
             final ExecutionContext executionContext) {
 
         final DocumentTemplate template =
-                upsertTemplateForPdf(documentType, atPath, nameSuffixIfAny, previewOnly, contentText,
-                        contentRenderingStrategy, nameText,
-                        nameRenderingStrategy, executionContext);
+                upsertTemplateForPdf(documentType, atPath, nameSuffixIfAny, previewOnly, 
+				        contentText, contentRenderingStrategy, 
+						nameText, nameRenderingStrategy, 
+						executionContext);
         template.applicable(applicableToClass, binderClass);
 
         return template;
@@ -310,9 +310,9 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
             final String nameSuffixIfAny,
             final String contentText, final RenderingStrategy contentRenderingStrategy,
             final String nameText, final RenderingStrategy nameRenderingStrategy,
-            final ExecutionContext executionContext,
-            final Class<Document> domainClass,
-            final Class<? extends Binder> binderClass) {
+            final Class<?> domainClass,
+            final Class<? extends Binder> binderClass,
+            final ExecutionContext executionContext) {
 
         final LocalDate date = clockService.now();
 
@@ -361,11 +361,9 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
 
 
     @Inject
-    private ApplicationTenancyRepository applicationTenancyRepository;
+    RenderingStrategyRepository renderingStrategyRepository;
     @Inject
-    private RenderingStrategyRepository renderingStrategyRepository;
-    @Inject
-    private ClockService clockService;
+    ClockService clockService;
 
 
 }

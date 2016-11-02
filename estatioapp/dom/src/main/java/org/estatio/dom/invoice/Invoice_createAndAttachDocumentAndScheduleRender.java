@@ -19,14 +19,30 @@
  */
 package org.estatio.dom.invoice;
 
-import org.apache.isis.applib.annotation.Mixin;
+import java.io.IOException;
 
-import org.incode.module.document.dom.mixins.T_createDocumentAndRender;
+import org.apache.isis.applib.annotation.Action;
+import org.apache.isis.applib.annotation.Mixin;
+import org.apache.isis.applib.annotation.Where;
+
+import org.incode.module.document.dom.impl.docs.DocumentTemplate;
+import org.incode.module.document.dom.mixins.T_createAndAttachDocumentAndScheduleRender;
 
 @Mixin
-public class Invoice_createDocument extends T_createDocumentAndRender<Invoice> {
+public class Invoice_createAndAttachDocumentAndScheduleRender
+        extends T_createAndAttachDocumentAndScheduleRender<Invoice> {
 
-    public Invoice_createDocument(final Invoice domainObject) {
+    public Invoice_createAndAttachDocumentAndScheduleRender(final Invoice domainObject) {
         super(domainObject);
+    }
+
+    /**
+     * For use only programmatically.
+     */
+    @Action(hidden = Where.EVERYWHERE)
+    @Override
+    public Object $$(
+            final DocumentTemplate template) throws IOException {
+        return super.$$(template);
     }
 }
