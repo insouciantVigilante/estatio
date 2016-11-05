@@ -182,12 +182,13 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
                 docTypeForInvoice,
                 ApplicationTenancyForGlobal.PATH, null,
                 false,
-                "Invoice for ${this.number}", url
+                url
                 + "Invoice"
                 + "&id=${this.id}"
                 + "&rs:Command=Render&rs:Format=PDF",
-                sipcRenderingStrategy, "Invoice for ${this.number}",
-                siRenderingStrategy, Invoice.class, BinderForReportServerAttachToInput.class,
+                sipcRenderingStrategy,
+                "Invoice for ${this.number}", siRenderingStrategy,
+                Invoice.class, BinderForReportServerAttachToInput.class,
                 executionContext
         );
 
@@ -196,12 +197,13 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
                 docTypeForInvoice,
                 ApplicationTenancyForIt.PATH, "( Italy)",
                 false,
-                "Invoice for ${this.number}", url
+                url
                 + "Invoice"
                 + "&id=${this.id}"
                 + "&rs:Command=Render&rs:Format=PDF",
-                sipcRenderingStrategy, "Invoice for ${this.number}",
-                siRenderingStrategy, Invoice.class, BinderForReportServerAttachToInput.class,
+                sipcRenderingStrategy,
+                "Invoice for ${this.number}", siRenderingStrategy,
+                Invoice.class, BinderForReportServerAttachToInput.class,
                 executionContext
         );
     }
@@ -217,11 +219,12 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
                 upsertType(DOC_TYPE_REF_INVOICES_OVERVIEW, "Invoices overview", executionContext),
                 ApplicationTenancyForGlobal.PATH, null,
                 true,
-                "Invoices overview", URL
+                URL
                 + "Invoices"
                 + "&dueDate=${this.dueDate}&${this.seller.id}&atPath=${this.atPath}"
                 + "&rs:Command=Render&rs:Format=PDF",
-                sipcRenderingStrategy, "Invoices overview",
+                sipcRenderingStrategy,
+                "Invoices overview",
                 siRenderingStrategy,
                 InvoiceSummaryForPropertyDueDateStatus.class,
                 BinderForReportServerAttachNone.class,
@@ -232,7 +235,7 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
                 upsertType(DOC_TYPE_REF_INVOICES_PRELIM, "Preliminary letter for Invoices", executionContext),
                 ApplicationTenancyForGlobal.PATH, null,
                 true,
-                "Preliminary letter for Invoices", URL
+                URL
                 + "Preliminary+Letter"
                 + "&dueDate=${this.dueDate}&sellerId=${this.seller.id}&atPath=${this.atPath}"
                 + "&rs:Command=Render&rs:Format=PDF",
@@ -248,7 +251,7 @@ public class DocumentTypeAndTemplatesFSForInvoicesUsingSsrs extends DocumentTemp
                 upsertType(DOC_TYPE_REF_INVOICES_PRELIM_FOR_SELLER, "Preliminary Invoice for Seller", executionContext),
                 ApplicationTenancyForGlobal.PATH, null,
                 true,
-                "Preliminary Invoice for Seller", URL
+                URL
                 + "Preliminary+Letter"
                 + "&dueDate=${this.dueDate}&sellerId=${this.seller.id}&atPath=${this.atPath}"
                 + "&rs:Command=Render&rs:Format=PDF",
